@@ -56,8 +56,6 @@ This repository provides a collection of subscription and configuration files fo
 
 </div>
 
-Replace `danialmd81` with your actual GitHub username for the links to work.
-
 ## Usage
 
 - Browse the table above to find the configuration or subscription file you need.
