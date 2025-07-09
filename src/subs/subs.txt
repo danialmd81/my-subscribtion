@@ -30,3 +30,5 @@ https://raw.githubusercontent.com/MhdiTaheri/V2rayCollector_Py/refs/heads/main/s
 https://raw.githubusercontent.com/roosterkid/openproxylist/refs/heads/main/V2RAY_RAW.txt
 https://raw.githubusercontent.com/MhdiTaheri/V2rayCollector/main/sub/mix
 https://raw.githubusercontent.com/mahdibland/SSAggregator/master/sub/sub_merge_base64.txt
+https://raw.githubusercontent.com/liketolivefree/kobabi/main/sub_all.txt
+https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/master/sub/proxies.txt
