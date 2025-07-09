@@ -10,22 +10,14 @@ This repository provides a collection of subscription and configuration files fo
 
 ## Text Files Table
 
-| File Location                | Description                        | Link |
-|-----------------------------|------------------------------------|------|
-| src/subs/hysteria.txt        | Hysteria protocol config           | [hysteria.txt](src/subs/hysteria.txt) |
-| src/subs/mixed.txt           | Mixed protocol config              | [mixed.txt](src/subs/mixed.txt) |
-| src/subs/ss.txt              | Shadowsocks config                 | [ss.txt](src/subs/ss.txt) |
-| src/subs/subs.txt            | General subscription list          | [subs.txt](src/subs/subs.txt) |
-| src/subs/trojan.txt          | Trojan protocol config             | [trojan.txt](src/subs/trojan.txt) |
-| src/subs/vless.txt           | VLESS protocol config              | [vless.txt](src/subs/vless.txt) |
-| src/subs/vmess.txt           | VMess protocol config              | [vmess.txt](src/subs/vmess.txt) |
-| src/telegram/channels.csv    | Telegram channels list (CSV)       | [channels.csv](src/telegram/channels.csv) |
-| src/telegram/hysteria.txt    | Hysteria protocol (Telegram)       | [hysteria.txt](src/telegram/hysteria.txt) |
-| src/telegram/mixed.txt       | Mixed protocol (Telegram)          | [mixed.txt](src/telegram/mixed.txt) |
-| src/telegram/ss.txt          | Shadowsocks (Telegram)             | [ss.txt](src/telegram/ss.txt) |
-| src/telegram/trojan.txt      | Trojan protocol (Telegram)         | [trojan.txt](src/telegram/trojan.txt) |
-| src/telegram/vless.txt       | VLESS protocol (Telegram)          | [vless.txt](src/telegram/vless.txt) |
-| src/telegram/vmess.txt       | VMess protocol (Telegram)          | [vmess.txt](src/telegram/vmess.txt) |
+| Protocol   | Subscription File                              | Telegram File                                 |
+|------------|-----------------------------------------------|-----------------------------------------------|
+| Hysteria   | [hysteria.txt](src/subs/hysteria.txt)         | [hysteria.txt](src/telegram/hysteria.txt)     |
+| Mixed      | [mixed.txt](src/subs/mixed.txt)               | [mixed.txt](src/telegram/mixed.txt)           |
+| Shadowsocks| [ss.txt](src/subs/ss.txt)                     | [ss.txt](src/telegram/ss.txt)                 |
+| Trojan     | [trojan.txt](src/subs/trojan.txt)             | [trojan.txt](src/telegram/trojan.txt)         |
+| VLESS      | [vless.txt](src/subs/vless.txt)               | [vless.txt](src/telegram/vless.txt)           |
+| VMess      | [vmess.txt](src/subs/vmess.txt)               | [vmess.txt](src/telegram/vmess.txt)           |
 
 ## Usage
 
