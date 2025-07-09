@@ -10,19 +10,21 @@ This repository provides a collection of subscription and configuration files fo
 
 ## Text Files Table
 
-| Protocol   | Subscription File                              | Telegram File                                 |
-|------------|-----------------------------------------------|-----------------------------------------------|
-| Hysteria   | [hysteria.txt](src/subs/hysteria.txt)         | [hysteria.txt](src/telegram/hysteria.txt)     |
-| Mixed      | [mixed.txt](src/subs/mixed.txt)               | [mixed.txt](src/telegram/mixed.txt)           |
-| Shadowsocks| [ss.txt](src/subs/ss.txt)                     | [ss.txt](src/telegram/ss.txt)                 |
-| Trojan     | [trojan.txt](src/subs/trojan.txt)             | [trojan.txt](src/telegram/trojan.txt)         |
-| VLESS      | [vless.txt](src/subs/vless.txt)               | [vless.txt](src/telegram/vless.txt)           |
-| VMess      | [vmess.txt](src/subs/vmess.txt)               | [vmess.txt](src/telegram/vmess.txt)           |
+| Protocol   | Subscription File                                                                                                   | Telegram File                                                                                                   |
+|------------|---------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| Hysteria   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/hysteria.txt)                | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/hysteria.txt)         |
+| Mixed      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/mixed.txt)                   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/mixed.txt)            |
+| Shadowsocks| [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/ss.txt)                      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/ss.txt)               |
+| Trojan     | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/trojan.txt)                  | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/trojan.txt)           |
+| VLESS      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/vless.txt)                   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/vless.txt)            |
+| VMess      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/vmess.txt)                   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/vmess.txt)            |
+
+Replace `danialmd81` with your actual GitHub username for the links to work.
 
 ## Usage
 
 - Browse the table above to find the configuration or subscription file you need.
-- Click the link to view or download the file directly.
+- Click the raw link to view or download the file directly.
 - Use these files in your proxy client or for Telegram channel management as needed.
 
 ## License
