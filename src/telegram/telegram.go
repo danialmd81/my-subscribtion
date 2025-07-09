@@ -14,8 +14,6 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/jszwec/csvutil"
-	"github.com/projectdiscovery/gologger"
-	"github.com/projectdiscovery/gologger/levels"
 )
 
 var (
@@ -55,13 +53,16 @@ type ChannelsType struct {
 
 func Run() {
 
-	gologger.DefaultLogger.SetMaxLevel(levels.LevelDebug)
 	flag.Parse()
 
 	fileData, err := helpers.ReadFileContent("telegram/channels.csv")
+	if err != nil {
+		fmt.Println("[FATAL ERROR] ", err)
+		return
+	}
 	var channels []ChannelsType
 	if err = csvutil.Unmarshal([]byte(fileData), &channels); err != nil {
-		gologger.Fatal().Msg("error: " + err.Error())
+		fmt.Println("[FATAL ERROR] ", err)
 		return
 	}
 
@@ -73,25 +74,28 @@ func Run() {
 
 		// get channel messages
 		resp := HttpRequest(channel.URL)
-		doc, err := goquery.NewDocumentFromReader(resp.Body)
-		err = resp.Body.Close()
-
-		if err != nil {
-			gologger.Error().Msg(err.Error())
+		if resp != nil {
+			doc, err := goquery.NewDocumentFromReader(resp.Body)
+			if err == nil {
+				err = resp.Body.Close()
+				if err == nil {
+					fmt.Println(" ")
+					fmt.Println("---------------------------------------")
+					fmt.Println("[INFO] Crawling ", channel.URL)
+					CrawlForV2ray(doc, channel.URL, channel.AllMessagesFlag)
+					fmt.Println("[INFO] Crawled ", channel.URL+"!")
+					fmt.Println("---------------------------------------")
+					fmt.Println(" ")
+				} else {
+					fmt.Println("[ERROR] ", err)
+				}
+			} else {
+				fmt.Println("[ERROR] Failed to parse document: ", err)
+			}
 		}
-
-		fmt.Println(" ")
-		fmt.Println(" ")
-		fmt.Println("---------------------------------------")
-		gologger.Info().Msg("Crawling " + channel.URL)
-		CrawlForV2ray(doc, channel.URL, channel.AllMessagesFlag)
-		gologger.Info().Msg("Crawled " + channel.URL + " ! ")
-		fmt.Println("---------------------------------------")
-		fmt.Println(" ")
-		fmt.Println(" ")
 	}
 
-	gologger.Info().Msg("Creating output files !")
+	fmt.Println("[INFO] Creating output files !")
 
 	for proto, configcontent := range configs {
 		lines := helpers.RemoveDuplicate(configcontent)
@@ -112,8 +116,7 @@ func Run() {
 		helpers.WriteToFile(lines, "telegram/"+proto+".txt")
 
 	}
-
-	gologger.Info().Msg("All Done :D")
+	fmt.Println("[INFO] All Done :D")
 
 }
 
@@ -316,23 +319,23 @@ func EditVmessPs(config string, fileName string, AddConfigName bool) string {
 func loadMore(link string) *goquery.Document {
 	req, err := http.NewRequest("GET", link, nil)
 	if err != nil {
-		gologger.Error().Msg(fmt.Sprintf("Failed to create request: %s", err))
+		fmt.Println("[ERROR] Failed to create request: ", err)
 		return nil
 	}
 	fmt.Println(link)
 	resp, err := client.Do(req)
 	if err != nil {
-		gologger.Error().Msg(fmt.Sprintf("Request failed: %s", err))
+		fmt.Println("[ERROR] Request failed: ", err)
 		return nil
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		gologger.Error().Msg(fmt.Sprintf("Non-OK HTTP status: %d", resp.StatusCode))
+		fmt.Println("Non-OK HTTP status: ", resp.StatusCode)
 		return nil
 	}
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		gologger.Error().Msg(fmt.Sprintf("Failed to parse document: %s", err))
+		fmt.Println("[ERROR] Failed to parse document: ", err)
 		return nil
 	}
 	return doc
@@ -341,12 +344,12 @@ func loadMore(link string) *goquery.Document {
 func HttpRequest(url string) *http.Response {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		gologger.Fatal().Msg(fmt.Sprintf("Error When requesting to: %s Error : %s", url, err))
+		fmt.Printf("[ERROR] When requesting to: %s [ERROR] : %s\n", url, err)
 	}
 
 	resp, err := client.Do(req)
 	if err != nil {
-		gologger.Fatal().Msg(err.Error())
+		fmt.Println("[FATAL ERROR] ", err.Error())
 	}
 	return resp
 }
@@ -354,7 +357,7 @@ func HttpRequest(url string) *http.Response {
 func GetMessages(length int, doc *goquery.Document, number string, channel string) *goquery.Document {
 	x := loadMore(channel + "?before=" + number)
 	if x == nil {
-		gologger.Error().Msg("loadMore returned nil, returning current doc")
+		fmt.Println("[INFO] loadMore returned nil, returning current doc")
 		return doc
 	}
 
