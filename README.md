@@ -10,51 +10,14 @@ This repository provides a collection of subscription and configuration files fo
 
 ## Text Files Table
 
-<div align="center" style="width:100%">
-
-<table width="100%">
-<thead>
-<tr>
-<th style="text-align:center">Protocol</th>
-<th style="text-align:center">Subscription File</th>
-<th style="text-align:center">Telegram File</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">Hysteria</td>
-<td style="text-align:center"><a href="https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/hysteria.txt">raw</a></td>
-<td style="text-align:center"><a href="https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/hysteria.txt">raw</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Mixed</td>
-<td style="text-align:center"><a href="https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/mixed.txt">raw</a></td>
-<td style="text-align:center"><a href="https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/mixed.txt">raw</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Shadowsocks</td>
-<td style="text-align:center"><a href="https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/ss.txt">raw</a></td>
-<td style="text-align:center"><a href="https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/ss.txt">raw</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Trojan</td>
-<td style="text-align:center"><a href="https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/trojan.txt">raw</a></td>
-<td style="text-align:center"><a href="https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/trojan.txt">raw</a></td>
-</tr>
-<tr>
-<td style="text-align:center">VLESS</td>
-<td style="text-align:center"><a href="https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/vless.txt">raw</a></td>
-<td style="text-align:center"><a href="https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/vless.txt">raw</a></td>
-</tr>
-<tr>
-<td style="text-align:center">VMess</td>
-<td style="text-align:center"><a href="https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/vmess.txt">raw</a></td>
-<td style="text-align:center"><a href="https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/vmess.txt">raw</a></td>
-</tr>
-</tbody>
-</table>
-
-</div>
+| Protocol   | Subscription File                                                                                                   | Telegram File                                                                                                   |
+|------------|---------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| Hysteria   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/hysteria.txt)                | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/hysteria.txt)         |
+| Mixed      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/mixed.txt)                   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/mixed.txt)            |
+| Shadowsocks| [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/ss.txt)                      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/ss.txt)               |
+| Trojan     | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/trojan.txt)                  | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/trojan.txt)           |
+| VLESS      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/vless.txt)                   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/vless.txt)            |
+| VMess      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/vmess.txt)                   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/vmess.txt)            |
 
 ## Usage
 
