@@ -19,6 +19,11 @@ This repository provides a collection of subscription and configuration files fo
 | VLESS      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/vless.txt)                   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/vless.txt)            |
 | VMess      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/vmess.txt)                   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/vmess.txt)            |
 
+## To Do
+
+- [ ] Refactor the Telegram `mixed.txt` file: Separate and categorize each protocol (e.g., VMess, VLESS, etc.) into their own dedicated files for better organization and clarity.
+- [ ] Improve categorization logic: Enhance the process for identifying and sorting protocols in Telegram files to ensure each protocol is clearly distinguished and easy to find.
+
 ## Usage
 
 - Browse the table above to find the configuration or subscription file you need.
