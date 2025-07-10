@@ -58,7 +58,6 @@ func Run() {
 			if err == nil {
 				err = resp.Body.Close()
 				if err == nil {
-					fmt.Println(" ")
 					fmt.Println("---------------------------------------")
 					fmt.Println("[INFO] Crawling ", url)
 					CrawlForV2ray(doc, url)
