@@ -16,7 +16,7 @@ func ParseBase64SubsLink(b64 string) map[string]string {
 		"trojan":   "",
 		"vless":    "",
 		"hysteria": "",
-		"mixed":    "",
+		"other":    "",
 	}
 
 	decoded, err := base64.StdEncoding.DecodeString(b64)
@@ -40,7 +40,7 @@ func ParseBase64SubsLink(b64 string) map[string]string {
 			configs["hysteria"] += line + "\n"
 		default:
 			if line != "" {
-				configs["mixed"] += line + "\n"
+				configs["other"] += line + "\n"
 			}
 		}
 	}
@@ -64,7 +64,7 @@ func Run() {
 		"trojan":   "",
 		"vless":    "",
 		"hysteria": "",
-		"mixed":    "",
+		"other":    "",
 	}
 	for _, link := range links {
 		link = strings.TrimSpace(link)

@@ -10,10 +10,10 @@ This repository provides a collection of subscription and configuration files fo
 
 ## Text Files Table
 
-| Protocol   | Subscription File                                                                                                   | Telegram File                                                                                                   |
+| Protocol   | Subscription File                                                                                                   | Telegram File                                                                          |
 |------------|---------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
 | Hysteria   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/hysteria.txt)                | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/hysteria.txt)         |
-| Mixed(differ from others)      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/mixed.txt)                   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/mixed.txt)            |
+| Other      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/other.txt)                   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/other.txt)            |
 | Shadowsocks| [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/ss.txt)                      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/ss.txt)               |
 | Trojan     | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/trojan.txt)                  | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/trojan.txt)           |
 | VLESS      | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/subs/vless.txt)                   | [raw](https://raw.githubusercontent.com/danialmd81/my-subscribtion/main/src/telegram/vless.txt)            |
@@ -21,8 +21,8 @@ This repository provides a collection of subscription and configuration files fo
 
 ## To Do
 
-- [ ] Refactor the Telegram `mixed.txt` file: Separate and categorize each protocol (e.g., VMess, VLESS, etc.) into their own dedicated files for better organization and clarity.
-- [ ] Improve categorization logic: Enhance the process for identifying and sorting protocols in Telegram files to ensure each protocol is clearly distinguished and easy to find.
+- [x] Refactor the Telegram `mixed.txt` file: Separate and categorize each protocol (e.g., VMess, VLESS, etc.) into their own dedicated files for better organization and clarity.
+- [x] Improve categorization logic: Enhance the process for identifying and sorting protocols in Telegram files to ensure each protocol is clearly distinguished and easy to find.
 
 ## Usage
 

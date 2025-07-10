@@ -3,7 +3,6 @@ package telegram
 import (
 	"encoding/base64"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -13,20 +12,18 @@ import (
 	"github.com/danialmd81/my-subscribtion/telegram/helpers"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/jszwec/csvutil"
 )
 
 var (
-	client       = &http.Client{}
-	maxMessages  = 100
-	ConfigsNames = "@Vip_Security join us"
-	configs      = map[string]string{
+	client      = &http.Client{}
+	maxMessages = 100
+	configs     = map[string]string{
 		"ss":       "",
 		"vmess":    "",
 		"trojan":   "",
 		"vless":    "",
 		"hysteria": "",
-		"mixed":    "",
+		"other":    "",
 	}
 	ConfigFileIds = map[string]int32{
 		"ss":       0,
@@ -34,7 +31,7 @@ var (
 		"trojan":   0,
 		"vless":    0,
 		"hysteria": 0,
-		"mixed":    0,
+		"other":    0,
 	}
 	myregex = map[string]string{
 		"ss":       `(?m)(...ss:|^ss:)\/\/.+?(%3A%40|#)`,
@@ -43,37 +40,26 @@ var (
 		"vless":    `(?m)vless:\/\/.+?(%3A%40|#)`,
 		"hysteria": `(?m)(hysteria:\/\/|hy2:\/\/)[^\s]+`,
 	}
-	sort = flag.Bool("sort", false, "sort from latest to oldest (default : false)")
 )
 
-type ChannelsType struct {
-	URL             string `csv:"URL"`
-	AllMessagesFlag bool   `csv:"AllMessagesFlag"`
-}
-
 func Run() {
+	fmt.Println("[INFO] Telegram collector running...")
 
-	flag.Parse()
-
-	fileData, err := helpers.ReadFileContent("telegram/channels.csv")
+	fileData, err := helpers.ReadFileContent("telegram/channels.txt")
 	if err != nil {
 		fmt.Println("[FATAL ERROR] ", err)
 		return
 	}
-	var channels []ChannelsType
-	if err = csvutil.Unmarshal([]byte(fileData), &channels); err != nil {
-		fmt.Println("[FATAL ERROR] ", err)
-		return
-	}
 
-	// loop through the channels lists
-	for _, channel := range channels {
+	lines := strings.SplitSeq(fileData, "\n")
+	for line := range lines {
+		url := strings.TrimSpace(line)
+		if url == "" || strings.HasPrefix(url, "#") {
+			continue
+		}
+		url = helpers.ChangeUrlToTelegramWebUrl(url)
 
-		// change url
-		channel.URL = helpers.ChangeUrlToTelegramWebUrl(channel.URL)
-
-		// get channel messages
-		resp := HttpRequest(channel.URL)
+		resp := HttpRequest(url)
 		if resp != nil {
 			doc, err := goquery.NewDocumentFromReader(resp.Body)
 			if err == nil {
@@ -81,9 +67,9 @@ func Run() {
 				if err == nil {
 					fmt.Println(" ")
 					fmt.Println("---------------------------------------")
-					fmt.Println("[INFO] Crawling ", channel.URL)
-					CrawlForV2ray(doc, channel.URL, channel.AllMessagesFlag)
-					fmt.Println("[INFO] Crawled ", channel.URL+"!")
+					fmt.Println("[INFO] Crawling ", url)
+					CrawlForV2ray(doc, url)
+					fmt.Println("[INFO] Crawled ", url+"!")
 					fmt.Println("---------------------------------------")
 					fmt.Println(" ")
 				} else {
@@ -100,24 +86,14 @@ func Run() {
 	for proto, configcontent := range configs {
 		lines := helpers.RemoveDuplicate(configcontent)
 		lines = AddConfigNames(lines, proto)
-		if *sort {
-			// 		from latest to oldest mode :
-			linesArr := strings.Split(lines, "\n")
-			linesArr = helpers.Reverse(linesArr)
-			lines = strings.Join(linesArr, "\n")
-		} else {
-			// 		from oldest to latest mode :
-			linesArr := strings.Split(lines, "\n")
-			linesArr = helpers.Reverse(linesArr)
-			linesArr = helpers.Reverse(linesArr)
-			lines = strings.Join(linesArr, "\n")
-		}
+		// from latest to oldest mode :
+		linesArr := strings.Split(lines, "\n")
+		linesArr = helpers.Reverse(linesArr)
+		lines = strings.Join(linesArr, "\n")
 		lines = strings.TrimSpace(lines)
 		helpers.WriteToFile(lines, "telegram/"+proto+".txt")
-
 	}
 	fmt.Println("[INFO] All Done :D")
-
 }
 
 func AddConfigNames(config string, configtype string) string {
@@ -142,12 +118,12 @@ func AddConfigNames(config string, configtype string) string {
 						Prefix := strings.Split(matches[0], "ss://")[0]
 						if Prefix == "" {
 							ConfigFileIds[configtype] += 1
-							newConfigs += extractedConfig + ConfigsNames + " - " + strconv.Itoa(int(ConfigFileIds[configtype])) + "\n"
+							newConfigs += extractedConfig + " - " + strconv.Itoa(int(ConfigFileIds[configtype])) + "\n"
 						}
 					default:
 
 						ConfigFileIds[configtype] += 1
-						newConfigs += extractedConfig + ConfigsNames + " - " + strconv.Itoa(int(ConfigFileIds[configtype])) + "\n"
+						newConfigs += extractedConfig + " - " + strconv.Itoa(int(ConfigFileIds[configtype])) + "\n"
 					}
 				}
 			}
@@ -157,7 +133,7 @@ func AddConfigNames(config string, configtype string) string {
 	return newConfigs
 }
 
-func CrawlForV2ray(doc *goquery.Document, channelLink string, HasAllMessagesFlag bool) {
+func CrawlForV2ray(doc *goquery.Document, channelLink string) {
 	// here we are updating our DOM to include the x messages
 	// in our DOM and then extract the messages from that DOM
 	messages := doc.Find(".tgme_widget_message_wrap").Length()
@@ -169,118 +145,62 @@ func CrawlForV2ray(doc *goquery.Document, channelLink string, HasAllMessagesFlag
 		doc = GetMessages(maxMessages, doc, number, channelLink)
 	}
 
-	// extract v2ray based on message type and store configs at [configs] map
-	if HasAllMessagesFlag {
-		// get all messages and check for v2ray configs
-		doc.Find(".tgme_widget_message_text").Each(func(j int, s *goquery.Selection) {
-			// For each item found, get the band and title
-			messageText, _ := s.Html()
-			str := strings.Replace(messageText, "<br/>", "\n", -1)
-			doc, _ := goquery.NewDocumentFromReader(strings.NewReader(str))
-			messageText = doc.Text()
-			line := strings.TrimSpace(messageText)
-			lines := strings.Split(line, "\n")
-			for _, data := range lines {
-				extractedConfigs := strings.Split(ExtractConfig(data, []string{}), "\n")
+	// get only messages that are inside code or pre tag and check for v2ray configs
+	doc.Find("code,pre").Each(func(j int, s *goquery.Selection) {
+		messageText, _ := s.Html()
+		str := strings.ReplaceAll(messageText, "<br/>", "\n")
+		doc, _ := goquery.NewDocumentFromReader(strings.NewReader(str))
+		messageText = doc.Text()
+		line := strings.TrimSpace(messageText)
+		lines := strings.SplitSeq(line, "\n")
+		for data := range lines {
+			extractedConfigs := strings.Split(ExtractConfig(data, []string{}), "\n")
+			for protoRegex, regexValue := range myregex {
 				for _, extractedConfig := range extractedConfigs {
-					extractedConfig = strings.ReplaceAll(extractedConfig, " ", "")
-					if extractedConfig != "" {
-
-						// check if it is vmess or not
-						re := regexp.MustCompile(myregex["vmess"])
-						matches := re.FindStringSubmatch(extractedConfig)
-
-						if len(matches) > 0 {
-							extractedConfig = EditVmessPs(extractedConfig, "mixed", false)
-							if line != "" {
-								configs["mixed"] += extractedConfig + "\n"
-							}
-						} else {
-							configs["mixed"] += extractedConfig + "\n"
-						}
-
-					}
-				}
-			}
-		})
-	} else {
-		// get only messages that are inside code or pre tag and check for v2ray configs
-		doc.Find("code,pre").Each(func(j int, s *goquery.Selection) {
-			messageText, _ := s.Html()
-			str := strings.ReplaceAll(messageText, "<br/>", "\n")
-			doc, _ := goquery.NewDocumentFromReader(strings.NewReader(str))
-			messageText = doc.Text()
-			line := strings.TrimSpace(messageText)
-			lines := strings.Split(line, "\n")
-			for _, data := range lines {
-				extractedConfigs := strings.Split(ExtractConfig(data, []string{}), "\n")
-				for protoRegex, regexValue := range myregex {
-
-					for _, extractedConfig := range extractedConfigs {
-
-						re := regexp.MustCompile(regexValue)
-						matches := re.FindStringSubmatch(extractedConfig)
-						if len(matches) > 0 {
-							extractedConfig = strings.ReplaceAll(extractedConfig, " ", "")
-							if extractedConfig != "" {
-								switch protoRegex {
-								case "vmess":
-									extractedConfig = EditVmessPs(extractedConfig, protoRegex, false)
-									if extractedConfig != "" {
-										configs[protoRegex] += extractedConfig + "\n"
-									}
-								case "ss":
-									Prefix := strings.Split(matches[0], "ss://")[0]
-									if Prefix == "" {
-										configs[protoRegex] += extractedConfig + "\n"
-									}
-								default:
-
+					re := regexp.MustCompile(regexValue)
+					matches := re.FindStringSubmatch(extractedConfig)
+					if len(matches) > 0 {
+						extractedConfig = strings.ReplaceAll(extractedConfig, " ", "")
+						if extractedConfig != "" {
+							switch protoRegex {
+							case "vmess":
+								extractedConfig = EditVmessPs(extractedConfig, protoRegex, false)
+								if extractedConfig != "" {
 									configs[protoRegex] += extractedConfig + "\n"
 								}
-
+							default:
+								configs[protoRegex] += extractedConfig + "\n"
 							}
 						}
-
 					}
-
 				}
 			}
-
-		})
-	}
+		}
+	})
 }
 
 func ExtractConfig(Txt string, Tempconfigs []string) string {
-
-	// filename can be "" or mixed
-	for protoRegex, regexValue := range myregex {
-		re := regexp.MustCompile(regexValue)
-		matches := re.FindStringSubmatch(Txt)
-		extractedConfig := ""
-		if len(matches) > 0 {
-			switch protoRegex {
-			case "ss":
-				Prefix := strings.Split(matches[0], "ss://")[0]
-				if Prefix == "" {
-					extractedConfig = "\n" + matches[0]
-				} else if Prefix != "vle" { //  (Prefix != "vme" && Prefix != "") always true!
-					d := strings.Split(matches[0], "ss://")
-					extractedConfig = "\n" + "ss://" + d[1]
-				}
-			case "vmess":
-				extractedConfig = "\n" + matches[0]
-			default:
-				extractedConfig = "\n" + matches[0]
-			}
-
-			Tempconfigs = append(Tempconfigs, extractedConfig)
-			Txt = strings.ReplaceAll(Txt, matches[0], "")
-			ExtractConfig(Txt, Tempconfigs)
+	line := strings.TrimSpace(Txt)
+	if line == "" {
+		return strings.Join(Tempconfigs, "\n")
+	}
+	switch {
+	case strings.HasPrefix(line, "ss://"):
+		Tempconfigs = append(Tempconfigs, "\n"+line)
+	case strings.HasPrefix(line, "vmess://"):
+		Tempconfigs = append(Tempconfigs, "\n"+line)
+	case strings.HasPrefix(line, "trojan://"):
+		Tempconfigs = append(Tempconfigs, "\n"+line)
+	case strings.HasPrefix(line, "vless://"):
+		Tempconfigs = append(Tempconfigs, "\n"+line)
+	case strings.HasPrefix(line, "hysteria://"), strings.HasPrefix(line, "hy2://"):
+		Tempconfigs = append(Tempconfigs, "\n"+line)
+	default:
+		if line != "" {
+			Tempconfigs = append(Tempconfigs, "\n"+line)
 		}
 	}
-	d := strings.Join(Tempconfigs, "\n")
-	return d
+	return strings.Join(Tempconfigs, "\n")
 }
 
 func EditVmessPs(config string, fileName string, AddConfigName bool) string {
@@ -298,7 +218,7 @@ func EditVmessPs(config string, fileName string, AddConfigName bool) string {
 			if err == nil {
 				if AddConfigName {
 					ConfigFileIds[fileName] += 1
-					data["ps"] = ConfigsNames + " - " + strconv.Itoa(int(ConfigFileIds[fileName])) + "\n"
+					data["ps"] = " - " + strconv.Itoa(int(ConfigFileIds[fileName])) + "\n"
 				} else {
 					data["ps"] = ""
 				}
