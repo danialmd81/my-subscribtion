@@ -13,8 +13,13 @@ import (
 
 var protocols = []string{"hysteria", "ss", "trojan", "vless", "vmess", "other"}
 
+var count int
+
 func testConnection(protocol, entry string) bool {
-	fmt.Printf("[INFO] Testing protocol: %s\n", protocol)
+	count++
+	if count == 1000 || count == 1 {
+		fmt.Printf("[INFO] Testing protocol: %s\n", protocol)
+	}
 
 	if protocol == "other" {
 		return true
@@ -90,6 +95,7 @@ func mergeAndTest() error {
 		}
 		fmt.Printf("[INFO] Total entries: %d\n", totalEntries)
 
+		count = 0
 		goodEntries := []string{} // List of reachable entries
 		for entry := range entriesMap {
 			if testConnection(proto, entry) { // Test reachability
