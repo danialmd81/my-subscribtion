@@ -2,13 +2,9 @@ language: go
 go:
   - "1.22.x"
 
-jobs:
-  include:
-    - stage: Run and Commit
-      if: type = cron
-      before_install:
-        - cd src
-      install: true
-      script:
-        - go run main.go
-        - bash .travis-autocommit.sh
+install: true # disables default 'go get' step
+
+script:
+  - cd src
+  - go run main.go
+  - bash .travis-autocommit.sh
