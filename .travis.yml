@@ -1,0 +1,12 @@
+language: go
+go:
+  - "1.22.x"
+
+# Run every day
+jobs:
+  include:
+    - stage: Run and Commit
+      if: type = cron # Only run for scheduled builds
+      script:
+        - go run src/main.go
+        - bash .travis-autocommit.sh # Separate script for Git operations
