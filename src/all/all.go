@@ -28,7 +28,7 @@ func testConnection(protocol, entry string) bool {
 		if !strings.Contains(hostPort, ":") {
 			return false
 		}
-		dialer := net.Dialer{Timeout: 500 * time.Millisecond}
+		dialer := net.Dialer{Timeout: 100 * time.Millisecond}
 		conn, err := dialer.Dial("tcp", hostPort)
 		if err == nil {
 			conn.Close()
@@ -54,7 +54,7 @@ func testConnection(protocol, entry string) bool {
 		}
 	}
 	// Use TCP for all except hysteria (which may use UDP, but we use TCP for reachability)
-	dialer := net.Dialer{Timeout: 500 * time.Millisecond}
+	dialer := net.Dialer{Timeout: 100 * time.Millisecond}
 	conn, err := dialer.Dial("tcp", hostPort)
 	if err == nil {
 		conn.Close()
