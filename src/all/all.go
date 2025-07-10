@@ -14,6 +14,7 @@ import (
 var protocols = []string{"hysteria", "ss", "trojan", "vless", "vmess", "other"}
 
 func testConnection(protocol, entry string) bool {
+	fmt.Printf("[INFO] Testing protocol: %s\n", protocol)
 
 	if protocol == "other" {
 		return true
