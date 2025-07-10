@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -32,13 +31,6 @@ var (
 		"vless":    0,
 		"hysteria": 0,
 		"other":    0,
-	}
-	myregex = map[string]string{
-		"ss":       `(?m)(...ss:|^ss:)\/\/.+?(%3A%40|#)`,
-		"vmess":    `(?m)vmess:\/\/.+`,
-		"trojan":   `(?m)trojan:\/\/.+?(%3A%40|#)`,
-		"vless":    `(?m)vless:\/\/.+?(%3A%40|#)`,
-		"hysteria": `(?m)(hysteria:\/\/|hy2:\/\/)[^\s]+`,
 	}
 )
 
@@ -99,35 +91,33 @@ func Run() {
 func AddConfigNames(config string, configtype string) string {
 	configs := strings.Split(config, "\n")
 	newConfigs := ""
-	for protoRegex, regexValue := range myregex {
-
-		for _, extractedConfig := range configs {
-
-			re := regexp.MustCompile(regexValue)
-			matches := re.FindStringSubmatch(extractedConfig)
-			if len(matches) > 0 {
-				extractedConfig = strings.ReplaceAll(extractedConfig, " ", "")
-				if extractedConfig != "" {
-					switch protoRegex {
-					case "vmess":
-						extractedConfig = EditVmessPs(extractedConfig, configtype, true)
-						if extractedConfig != "" {
-							newConfigs += extractedConfig + "\n"
-						}
-					case "ss":
-						Prefix := strings.Split(matches[0], "ss://")[0]
-						if Prefix == "" {
-							ConfigFileIds[configtype] += 1
-							newConfigs += extractedConfig + " - " + strconv.Itoa(int(ConfigFileIds[configtype])) + "\n"
-						}
-					default:
-
-						ConfigFileIds[configtype] += 1
-						newConfigs += extractedConfig + " - " + strconv.Itoa(int(ConfigFileIds[configtype])) + "\n"
-					}
-				}
+	for _, extractedConfig := range configs {
+		extractedConfig = strings.ReplaceAll(extractedConfig, " ", "")
+		if extractedConfig == "" {
+			continue
+		}
+		switch {
+		case strings.HasPrefix(extractedConfig, "vmess://"):
+			extractedConfig = EditVmessPs(extractedConfig, configtype, true)
+			if extractedConfig != "" {
+				ConfigFileIds["vmess"] += 1
+				newConfigs += extractedConfig + "\n"
 			}
-
+		case strings.HasPrefix(extractedConfig, "ss://"):
+			ConfigFileIds["ss"] += 1
+			newConfigs += extractedConfig + " - " + strconv.Itoa(int(ConfigFileIds["ss"])) + "\n"
+		case strings.HasPrefix(extractedConfig, "trojan://"):
+			ConfigFileIds["trojan"] += 1
+			newConfigs += extractedConfig + " - " + strconv.Itoa(int(ConfigFileIds["trojan"])) + "\n"
+		case strings.HasPrefix(extractedConfig, "vless://"):
+			ConfigFileIds["vless"] += 1
+			newConfigs += extractedConfig + " - " + strconv.Itoa(int(ConfigFileIds["vless"])) + "\n"
+		case strings.HasPrefix(extractedConfig, "hysteria://"), strings.HasPrefix(extractedConfig, "hy2://"):
+			ConfigFileIds["hysteria"] += 1
+			newConfigs += extractedConfig + " - " + strconv.Itoa(int(ConfigFileIds["hysteria"])) + "\n"
+		default:
+			ConfigFileIds["other"] += 1
+			newConfigs += extractedConfig + " - " + strconv.Itoa(int(ConfigFileIds["other"])) + "\n"
 		}
 	}
 	return newConfigs
@@ -155,24 +145,27 @@ func CrawlForV2ray(doc *goquery.Document, channelLink string) {
 		lines := strings.SplitSeq(line, "\n")
 		for data := range lines {
 			extractedConfigs := strings.Split(ExtractConfig(data, []string{}), "\n")
-			for protoRegex, regexValue := range myregex {
-				for _, extractedConfig := range extractedConfigs {
-					re := regexp.MustCompile(regexValue)
-					matches := re.FindStringSubmatch(extractedConfig)
-					if len(matches) > 0 {
-						extractedConfig = strings.ReplaceAll(extractedConfig, " ", "")
-						if extractedConfig != "" {
-							switch protoRegex {
-							case "vmess":
-								extractedConfig = EditVmessPs(extractedConfig, protoRegex, false)
-								if extractedConfig != "" {
-									configs[protoRegex] += extractedConfig + "\n"
-								}
-							default:
-								configs[protoRegex] += extractedConfig + "\n"
-							}
-						}
+			for _, extractedConfig := range extractedConfigs {
+				extractedConfig = strings.ReplaceAll(extractedConfig, " ", "")
+				if extractedConfig == "" {
+					continue
+				}
+				switch {
+				case strings.HasPrefix(extractedConfig, "vmess://"):
+					extractedConfig = EditVmessPs(extractedConfig, "vmess", false)
+					if extractedConfig != "" {
+						configs["vmess"] += extractedConfig + "\n"
 					}
+				case strings.HasPrefix(extractedConfig, "ss://"):
+					configs["ss"] += extractedConfig + "\n"
+				case strings.HasPrefix(extractedConfig, "trojan://"):
+					configs["trojan"] += extractedConfig + "\n"
+				case strings.HasPrefix(extractedConfig, "vless://"):
+					configs["vless"] += extractedConfig + "\n"
+				case strings.HasPrefix(extractedConfig, "hysteria://"), strings.HasPrefix(extractedConfig, "hy2://"):
+					configs["hysteria"] += extractedConfig + "\n"
+				default:
+					configs["other"] += extractedConfig + "\n"
 				}
 			}
 		}
