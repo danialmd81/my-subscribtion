@@ -6,8 +6,9 @@ jobs:
   include:
     - stage: Run and Commit
       if: type = cron
-      install: cd src
-      script:
+      before_install:
         - cd src
+      install: true
+      script:
         - go run main.go
         - bash .travis-autocommit.sh
