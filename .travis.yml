@@ -8,5 +8,6 @@ jobs:
     - stage: Run and Commit
       if: type = cron # Only run for scheduled builds
       script:
+        - cd src
         - go run src/main.go
         - bash .travis-autocommit.sh # Separate script for Git operations
