@@ -17,7 +17,7 @@ var count int
 
 func testConnection(protocol, entry string) bool {
 	count++
-	if count == 1000 || count == 1 {
+	if count%1000 == 0 || count == 1 {
 		fmt.Printf("[INFO] Testing protocol: %s\n", protocol)
 	}
 
