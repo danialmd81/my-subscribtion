@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+// ParseBase64SubsLink decodes a base64-encoded subscription string and separates configs by protocol type.
 func ParseBase64SubsLink(b64 string) map[string]string {
 	configs := map[string]string{
 		"ss":       "",
@@ -47,9 +48,10 @@ func ParseBase64SubsLink(b64 string) map[string]string {
 	return configs
 }
 
+// Run reads subscription links from subs.txt, downloads and parses each, then saves separated configs to files by protocol.
 func Run() {
-	subsFile := "subs/subs.txt"
-	outputDir := "subs/"
+	subsFile := "subs/subs.txt" // Input file with subscription links
+	outputDir := "subs/"        // Output directory for config files
 
 	fmt.Println("[INFO] Reading subscription links from:", subsFile)
 	data, err := os.ReadFile(subsFile)
@@ -69,7 +71,7 @@ func Run() {
 	for _, link := range links {
 		link = strings.TrimSpace(link)
 		if link == "" || strings.HasPrefix(link, "//") {
-			continue
+			continue // Skip empty or commented lines
 		}
 		fmt.Println("[INFO] Downloading:", link)
 		resp, err := http.Get(link)
@@ -84,16 +86,16 @@ func Run() {
 			continue
 		}
 		fmt.Println("[INFO] Parsing configs from:", link)
-		parsed := ParseBase64SubsLink(string(body))
+		parsed := ParseBase64SubsLink(string(body)) // Parse and separate configs
 		for k, v := range parsed {
-			configs[k] += v
+			configs[k] += v // Merge configs by type
 		}
 	}
 	fmt.Println("[INFO] Saving separated configs to files in:", outputDir)
 	// Save each config type to a file
 	for k, v := range configs {
 		if v == "" {
-			continue
+			continue // Skip empty config types
 		}
 		filePath := outputDir + k + ".txt"
 		err := os.WriteFile(filePath, []byte(strings.TrimSpace(v)), 0644)

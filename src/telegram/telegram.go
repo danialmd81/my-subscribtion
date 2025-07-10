@@ -8,15 +8,15 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/danialmd81/my-subscribtion/telegram/helpers"
-
 	"github.com/PuerkitoBio/goquery"
+	"github.com/danialmd81/my-subscribtion/telegram/helpers"
 )
 
+// HTTP client and configuration storage
 var (
-	client      = &http.Client{}
-	maxMessages = 100
-	configs     = map[string]string{
+	client      = &http.Client{}     // HTTP client for requests
+	maxMessages = 100                // Max messages to fetch per channel
+	configs     = map[string]string{ // Stores configs by protocol
 		"ss":       "",
 		"vmess":    "",
 		"trojan":   "",
@@ -24,7 +24,7 @@ var (
 		"hysteria": "",
 		"other":    "",
 	}
-	ConfigFileIds = map[string]int32{
+	ConfigFileIds = map[string]int32{ // Counter for each config type
 		"ss":       0,
 		"vmess":    0,
 		"trojan":   0,
@@ -34,6 +34,7 @@ var (
 	}
 )
 
+// Run reads Telegram channel URLs, crawls each for proxy configs, and writes separated configs to files.
 func Run() {
 	fmt.Println("[INFO] Telegram collector running...")
 
@@ -88,6 +89,7 @@ func Run() {
 	fmt.Println("[INFO] All Done :D")
 }
 
+// AddConfigNames appends a unique ID or modifies the config name for each extracted config.
 func AddConfigNames(config string, configtype string) string {
 	configs := strings.Split(config, "\n")
 	newConfigs := ""
@@ -123,9 +125,8 @@ func AddConfigNames(config string, configtype string) string {
 	return newConfigs
 }
 
+// CrawlForV2ray parses a Telegram channel page for proxy configs and updates the configs map.
 func CrawlForV2ray(doc *goquery.Document, channelLink string) {
-	// here we are updating our DOM to include the x messages
-	// in our DOM and then extract the messages from that DOM
 	messages := doc.Find(".tgme_widget_message_wrap").Length()
 	fmt.Println("Fetched message:", messages)
 	link, exist := doc.Find(".tgme_widget_message_wrap .js-widget_message").Last().Attr("data-post")
@@ -172,6 +173,7 @@ func CrawlForV2ray(doc *goquery.Document, channelLink string) {
 	})
 }
 
+// ExtractConfig extracts proxy config lines from a given text block.
 func ExtractConfig(Txt string, Tempconfigs []string) string {
 	line := strings.TrimSpace(Txt)
 	if line == "" {
@@ -196,6 +198,7 @@ func ExtractConfig(Txt string, Tempconfigs []string) string {
 	return strings.Join(Tempconfigs, "\n")
 }
 
+// EditVmessPs decodes, modifies, and re-encodes vmess configs, optionally adding a config name.
 func EditVmessPs(config string, fileName string, AddConfigName bool) string {
 	// Decode the base64 string
 	if config == "" {
@@ -229,6 +232,7 @@ func EditVmessPs(config string, fileName string, AddConfigName bool) string {
 	return ""
 }
 
+// loadMore fetches more messages from a Telegram channel page.
 func loadMore(link string) *goquery.Document {
 	req, err := http.NewRequest("GET", link, nil)
 	if err != nil {
@@ -254,6 +258,7 @@ func loadMore(link string) *goquery.Document {
 	return doc
 }
 
+// HttpRequest sends a GET request and returns the HTTP response.
 func HttpRequest(url string) *http.Response {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -267,6 +272,7 @@ func HttpRequest(url string) *http.Response {
 	return resp
 }
 
+// GetMessages recursively fetches messages from a channel until the desired count is reached.
 func GetMessages(length int, doc *goquery.Document, number string, channel string) *goquery.Document {
 	x := loadMore(channel + "?before=" + number)
 	if x == nil {

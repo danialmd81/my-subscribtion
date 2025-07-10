@@ -62,45 +62,45 @@ func testConnection(protocol, entry string) bool {
 }
 
 func mergeAndTest() error {
-	baseDirs := []string{"subs/", "telegram/"}
-	outputDir := "."
+	baseDirs := []string{"subs/", "telegram/"} // Directories to read input files from
+	outputDir := "all/"                        // Output directory
 
 	for _, proto := range protocols {
 
-		entriesMap := make(map[string]struct{})
+		entriesMap := make(map[string]struct{}) // Deduplicate entries
 
 		for _, dir := range baseDirs {
 
-			filePath := filepath.Join(dir, proto+".txt")
+			filePath := filepath.Join(dir, proto+".txt") // Input file path
 			file, err := os.Open(filePath)
 			if err != nil {
 				fmt.Println("[ERROR] missing files")
-				continue // skip missing files
+				continue // Skip if file is missing
 			}
 			scanner := bufio.NewScanner(file)
 			for scanner.Scan() {
-				line := strings.TrimSpace(scanner.Text())
+				line := strings.TrimSpace(scanner.Text()) // Read and trim each line
 				if line != "" {
-					entriesMap[line] = struct{}{}
+					entriesMap[line] = struct{}{} // Add to map if not empty
 				}
 			}
 			file.Close()
 		}
 
-		goodEntries := []string{}
+		goodEntries := []string{} // List of reachable entries
 		for entry := range entriesMap {
-			if testConnection(proto, entry) {
+			if testConnection(proto, entry) { // Test reachability
 				goodEntries = append(goodEntries, entry)
 			}
 		}
 
-		outPath := filepath.Join(outputDir, "all/"+proto+".txt")
+		outPath := filepath.Join(outputDir, proto+".txt") // Output file path
 		outFile, err := os.Create(outPath)
 		if err != nil {
 			return fmt.Errorf("failed to create output file for %s: %w", proto, err)
 		}
 		for _, entry := range goodEntries {
-			_, _ = outFile.WriteString(entry + "\n")
+			_, _ = outFile.WriteString(entry + "\n") // Write each good entry
 		}
 		outFile.Close()
 		fmt.Printf("%s: %d good entries saved to %s\n", proto, len(goodEntries), outPath)
