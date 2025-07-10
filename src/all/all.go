@@ -14,6 +14,7 @@ import (
 var protocols = []string{"hysteria", "ss", "trojan", "vless", "vmess", "other"}
 
 func testConnection(protocol, entry string) bool {
+
 	if protocol == "other" {
 		return true
 	}
@@ -26,7 +27,7 @@ func testConnection(protocol, entry string) bool {
 		if !strings.Contains(hostPort, ":") {
 			return false
 		}
-		dialer := net.Dialer{Timeout: 3 * time.Second}
+		dialer := net.Dialer{Timeout: 500 * time.Millisecond}
 		conn, err := dialer.Dial("tcp", hostPort)
 		if err == nil {
 			conn.Close()
@@ -52,7 +53,7 @@ func testConnection(protocol, entry string) bool {
 		}
 	}
 	// Use TCP for all except hysteria (which may use UDP, but we use TCP for reachability)
-	dialer := net.Dialer{Timeout: 3 * time.Second}
+	dialer := net.Dialer{Timeout: 500 * time.Millisecond}
 	conn, err := dialer.Dial("tcp", hostPort)
 	if err == nil {
 		conn.Close()
@@ -66,15 +67,14 @@ func mergeAndTest() error {
 	outputDir := "all/"                        // Output directory
 
 	for _, proto := range protocols {
-
+		fmt.Printf("[INFO] Processing protocol: %s\n", proto)
 		entriesMap := make(map[string]struct{}) // Deduplicate entries
-
+		totalEntries := 0
 		for _, dir := range baseDirs {
-
 			filePath := filepath.Join(dir, proto+".txt") // Input file path
 			file, err := os.Open(filePath)
 			if err != nil {
-				fmt.Println("[ERROR] missing files")
+				fmt.Printf("[WARN] Missing file: %s\n", filePath)
 				continue // Skip if file is missing
 			}
 			scanner := bufio.NewScanner(file)
@@ -82,10 +82,12 @@ func mergeAndTest() error {
 				line := strings.TrimSpace(scanner.Text()) // Read and trim each line
 				if line != "" {
 					entriesMap[line] = struct{}{} // Add to map if not empty
+					totalEntries++
 				}
 			}
 			file.Close()
 		}
+		fmt.Printf("[INFO] Total entries: %d\n", totalEntries)
 
 		goodEntries := []string{} // List of reachable entries
 		for entry := range entriesMap {
@@ -103,7 +105,7 @@ func mergeAndTest() error {
 			_, _ = outFile.WriteString(entry + "\n") // Write each good entry
 		}
 		outFile.Close()
-		fmt.Printf("%s: %d good entries saved to %s\n", proto, len(goodEntries), outPath)
+		fmt.Printf("[SUMMARY] %s: %d/%d good entries saved to %s\n", proto, len(goodEntries), totalEntries, outPath)
 	}
 	return nil
 }
