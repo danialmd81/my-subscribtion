@@ -1,2 +1,0 @@
-vmess://c208e0ae-6f6d-4745-99da-44a44744c530@www.meter.net:2083?encryption=auto&security=tls&sni=blaze-ger-248.blazecloudmain.site&fp=&type=ws&path=/linkwsrt?ed=2560&host=blaze-ger-248.blazecloudmain.site#@NetAccount
-vmess://418048af-a293-4b99-9b0c-98ca3580dd24@23.225.125.70:30002?allowInsecure=1&encryption=auto&path=/path/170733132233&security=tls&type=ws#✅@v2ray_configs_pools
