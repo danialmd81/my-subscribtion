@@ -13,18 +13,7 @@ import (
 
 var protocols = []string{"hysteria", "ss", "trojan", "vless", "vmess", "other"}
 
-var count int
-
-func testConnection(protocol, entry string) bool {
-	count++
-	if count%1000 == 0 || count == 1 {
-		fmt.Printf("[INFO] Testing protocol: %s\n", protocol)
-	}
-
-	if protocol == "other" {
-		return true
-	}
-
+func testCommon(entry string, timeout time.Duration) bool {
 	// Try to parse as URL
 	u, err := url.Parse(entry)
 	if err != nil || u.Host == "" {
@@ -33,7 +22,7 @@ func testConnection(protocol, entry string) bool {
 		if !strings.Contains(hostPort, ":") {
 			return false
 		}
-		dialer := net.Dialer{Timeout: 100 * time.Millisecond}
+		dialer := net.Dialer{Timeout: timeout}
 		conn, err := dialer.Dial("tcp", hostPort)
 		if err == nil {
 			conn.Close()
@@ -59,11 +48,30 @@ func testConnection(protocol, entry string) bool {
 		}
 	}
 	// Use TCP for all except hysteria (which may use UDP, but we use TCP for reachability)
-	dialer := net.Dialer{Timeout: 100 * time.Millisecond}
+	dialer := net.Dialer{Timeout: timeout}
 	conn, err := dialer.Dial("tcp", hostPort)
 	if err == nil {
 		conn.Close()
 		return true
+	}
+
+	return false
+}
+
+var count int
+
+func testConnection(protocol, entry string) bool {
+	count++
+	if count%1000 == 0 || count == 1 {
+		fmt.Printf("[INFO] Testing protocol: %s\n", protocol)
+	}
+	switch protocol {
+	case "other", "hysteria":
+		return true
+	case "vmess":
+		return testCommon(entry, 500*time.Millisecond)
+	default:
+		testCommon(entry, 100*time.Millisecond)
 	}
 	return false
 }
