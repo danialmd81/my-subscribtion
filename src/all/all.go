@@ -22,13 +22,6 @@ func testCommon(entry string, timeout time.Duration) bool {
 		if !strings.Contains(hostPort, ":") {
 			return false
 		}
-		dialer := net.Dialer{Timeout: timeout}
-		conn, err := dialer.Dial("tcp", hostPort)
-		if err == nil {
-			conn.Close()
-			return true
-		}
-		return false
 	}
 
 	hostPort := u.Host
@@ -47,6 +40,7 @@ func testCommon(entry string, timeout time.Duration) bool {
 			return false
 		}
 	}
+
 	// Use TCP for all except hysteria (which may use UDP, but we use TCP for reachability)
 	dialer := net.Dialer{Timeout: timeout}
 	conn, err := dialer.Dial("tcp", hostPort)
@@ -71,9 +65,8 @@ func testConnection(protocol, entry string) bool {
 	case "vmess":
 		return testCommon(entry, 500*time.Millisecond)
 	default:
-		testCommon(entry, 100*time.Millisecond)
+		return testCommon(entry, 300*time.Millisecond)
 	}
-	return false
 }
 
 func mergeAndTest() error {
