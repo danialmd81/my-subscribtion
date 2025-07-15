@@ -16,28 +16,29 @@ var protocols = []string{"hysteria", "ss", "trojan", "vless", "vmess", "other"}
 func testCommon(entry string, timeout time.Duration) bool {
 	// Try to parse as URL
 	u, err := url.Parse(entry)
+	var hostPort string
 	if err != nil || u.Host == "" {
 		// Try to parse as host:port
-		hostPort := entry
+		hostPort = entry
 		if !strings.Contains(hostPort, ":") {
 			return false
 		}
-	}
-
-	hostPort := u.Host
-	if !strings.Contains(hostPort, ":") {
-		// Try to get port from scheme
-		switch u.Scheme {
-		case "ss":
-			hostPort += ":8388"
-		case "trojan":
-			hostPort += ":443"
-		case "vless", "vmess":
-			hostPort += ":443"
-		case "hysteria":
-			hostPort += ":443"
-		default:
-			return false
+	} else {
+		hostPort = u.Host
+		if !strings.Contains(hostPort, ":") {
+			// Try to get port from scheme
+			switch u.Scheme {
+			case "ss":
+				hostPort += ":8388"
+			case "trojan":
+				hostPort += ":443"
+			case "vless", "vmess":
+				hostPort += ":443"
+			case "hysteria":
+				hostPort += ":443"
+			default:
+				return false
+			}
 		}
 	}
 
