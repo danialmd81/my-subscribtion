@@ -60,10 +60,8 @@ func testConnection(protocol, entry string) bool {
 		fmt.Printf("[INFO] Testing protocol: %s\n", protocol)
 	}
 	switch protocol {
-	case "other", "hysteria":
+	case "other", "hysteria", "vmess":
 		return true
-	case "vmess":
-		return testCommon(entry, 500*time.Millisecond)
 	default:
 		return testCommon(entry, 300*time.Millisecond)
 	}
