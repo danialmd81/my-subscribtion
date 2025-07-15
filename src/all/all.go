@@ -64,7 +64,7 @@ func testConnection(protocol, entry string) bool {
 	case "other", "hysteria", "vmess":
 		return true
 	default:
-		return testCommon(entry, 300*time.Millisecond)
+		return testCommon(entry, 150*time.Millisecond)
 	}
 }
 
